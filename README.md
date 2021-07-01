@@ -2,6 +2,8 @@
 
 ## Base implemention
 
+The product of `AxB` has first dimesion of `A` and second dimension of `B`, so in our case the indices `i` and `j` work as entries for a new matrix product. Then the shared index `k` iterates over a row in `A` and column in `B`.
+
 ```c
   for(int32_t i = 0; i < rows1; i++) {
 	for(int32_t j = 0; j < cols2; j++) {
@@ -15,7 +17,7 @@
 ```
 
 ```
-$ gcc -o x main.c helper.c
+$ gcc -o x main.c helper.c mult.c
 $ ./x
 ([0][0] = 0 x [0][0] = 0), ([0][1] = 1 x [1][0] = 3), ([0][2] = 2 x [2][0] = 6), ([0][3] = 3 x [3][0] = 9),  => 42
 ([0][0] = 0 x [0][1] = 1), ([0][1] = 1 x [1][1] = 4), ([0][2] = 2 x [2][1] = 7), ([0][3] = 3 x [3][1] = 10),  => 48

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h> // int16_t
 #include "helper.h"
+#include "mult.h"
 
 #define m1 3
 #define n2 4
