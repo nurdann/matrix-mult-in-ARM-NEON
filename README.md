@@ -1,6 +1,6 @@
 # Matrix multiplication using ARM NEON intrinsics
 
-## Base implemention
+## Base implemention (mult)
 
 The product of `AxB` has first dimesion of `A` and second dimension of `B`, so in our case the indices `i` and `j` work as entries for a new matrix product. Then the shared index `k` iterates over a row in `A` and column in `B`.
 
@@ -32,3 +32,27 @@ $ ./x
 114, 136, 158
 186, 224, 262
 ```
+
+## 8x1 multiplications (mult8x1)
+
+Install ARM compiler,
+
+```
+sudo apt install gcc-arm-linux-gnueabi
+```
+
+Install `qemu` to run ARM executable on x86 architechture,
+
+```
+sudo apt install binfmt-support qemu qemu-user-static
+```
+source: https://askubuntu.com/a/842271
+
+Compile and run the executable
+
+```
+$ /usr/bin/arm-linux-gnueabi-gcc -mfpu=neon -mcpu=cortex-a9 -mfloat-abi=softfp main.c -static -o x
+```
+
+
+We can multiply 8 elements at a time using `16x8_t` type that holds 8 16-bit integers. For that we need align 8 elements continuosly `int16_t v[8]` and load as a `16x8_t` vector.
