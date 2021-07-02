@@ -69,11 +69,11 @@ To multiply 8 items 4 row values at a time, essentially performing 4x8 submatrix
 
 ## Benchmarking
 
-|Function\nxn| 500 | 1000 | 5000
-|:           |:    |:     |:
-|mult        | 0.996s | 8.562s | 35m57.211s
-|mult1x8     | 1.401s | 11.233s | 37m9.711s
-|mult4x8     | 0.748s | 5.948s | 15m9.300s
+|Function\nxn| 500 | 1000 | 5000 |
+|:---        |:---    |:--     |:--- |
+|mult        | 0.996s | 8.562s | 35m57.211s |
+|mult1x8     | 1.401s | 11.233s | 37m9.711s |
+|mult4x8     | 0.748s | 5.948s | 15m9.300s  |
 
 Where `Function` indicates function name used, and `nxn` is the matrix dimension.
 
