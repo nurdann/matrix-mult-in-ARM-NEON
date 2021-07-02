@@ -1,5 +1,7 @@
 # Matrix multiplication using ARM NEON intrinsics
 
+Developed on Ubuntu18.04.
+
 ## Base implemention (mult)
 
 The product of `AxB` has first dimesion of `A` and second dimension of `B`, so in our case the indices `i` and `j` work as entries for a new matrix product. Then the shared index `k` iterates over a row in `A` and column in `B`.
