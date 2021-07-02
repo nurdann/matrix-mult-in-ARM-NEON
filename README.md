@@ -69,6 +69,8 @@ To multiply 8 items 4 row values at a time, essentially performing 4x8 submatrix
 
 ## Benchmarking
 
+We can do simple benchmarking with `time ./x` command.
+
 |Function\nxn| 500 | 1000 | 5000 |
 |:---        |:---    |:--     |:--- |
 |mult        | 0.996s | 8.562s | 35m57.211s |
