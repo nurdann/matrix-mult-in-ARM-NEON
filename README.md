@@ -42,7 +42,7 @@ source: https://askubuntu.com/a/842271
 Compile and run the executable
 
 ```
-$ /usr/bin/arm-linux-gnueabi-gcc -mfpu=neon -mcpu=cortex-a9 -mfloat-abi=softfp main.c -static -o x
+$ /usr/bin/arm-linux-gnueabi-gcc -mfpu=neon -mcpu=cortex-a9 -mfloat-abi=softfp main.c helper.c mult.c -static -o x
 ```
 
 
