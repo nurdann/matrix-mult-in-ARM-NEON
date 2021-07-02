@@ -19,21 +19,12 @@ The product of `AxB` has first dimesion of `A` and second dimension of `B`, so i
 ```
 $ gcc -o x main.c helper.c mult.c
 $ ./x
-([0][0] = 0 x [0][0] = 0), ([0][1] = 1 x [1][0] = 3), ([0][2] = 2 x [2][0] = 6), ([0][3] = 3 x [3][0] = 9),  => 42
-([0][0] = 0 x [0][1] = 1), ([0][1] = 1 x [1][1] = 4), ([0][2] = 2 x [2][1] = 7), ([0][3] = 3 x [3][1] = 10),  => 48
-([0][0] = 0 x [0][2] = 2), ([0][1] = 1 x [1][2] = 5), ([0][2] = 2 x [2][2] = 8), ([0][3] = 3 x [3][2] = 11),  => 54
-([1][0] = 4 x [0][0] = 0), ([1][1] = 5 x [1][0] = 3), ([1][2] = 6 x [2][0] = 6), ([1][3] = 7 x [3][0] = 9),  => 114
-([1][0] = 4 x [0][1] = 1), ([1][1] = 5 x [1][1] = 4), ([1][2] = 6 x [2][1] = 7), ([1][3] = 7 x [3][1] = 10),  => 136
-([1][0] = 4 x [0][2] = 2), ([1][1] = 5 x [1][2] = 5), ([1][2] = 6 x [2][2] = 8), ([1][3] = 7 x [3][2] = 11),  => 158
-([2][0] = 8 x [0][0] = 0), ([2][1] = 9 x [1][0] = 3), ([2][2] = 10 x [2][0] = 6), ([2][3] = 11 x [3][0] = 9),  => 186
-([2][0] = 8 x [0][1] = 1), ([2][1] = 9 x [1][1] = 4), ([2][2] = 10 x [2][1] = 7), ([2][3] = 11 x [3][1] = 10),  => 224
-([2][0] = 8 x [0][2] = 2), ([2][1] = 9 x [1][2] = 5), ([2][2] = 10 x [2][2] = 8), ([2][3] = 11 x [3][2] = 11),  => 262
 42, 48, 54
 114, 136, 158
 186, 224, 262
 ```
 
-## 8x1 multiplications (mult8x1)
+## 1x8 multiplications (mult1x8)
 
 Install ARM compiler,
 
@@ -56,3 +47,34 @@ $ /usr/bin/arm-linux-gnueabi-gcc -mfpu=neon -mcpu=cortex-a9 -mfloat-abi=softfp m
 
 
 We can multiply 8 elements at a time using `16x8_t` type that holds 8 16-bit integers. For that we need align 8 elements continuosly `int16_t v[8]` and load as a `16x8_t` vector.
+
+Since we are using flat indexing, `M[i][j]` turns to `M[i * number_of_columns + j]` so that we skip all previous row values.
+```c
+int16x8_t A = vld1q_s16(matrix1 + i * cols1 + k);
+```
+
+Additionally, we need to extract columns values before forming ARM NEON vector,
+
+```
+int16_t alignB[8];
+for(int l = 0; l < 8; l++) {
+	alignB[l] = matrix2[k * cols2 + l * cols2 + j];
+}
+int16x8_t B = vld1q_s16(alignB);
+```
+
+## 4x8 multiplications (mult4x8)
+
+To multiply 8 items 4 row values at a time, essentially performing 4x8 submatrix calculations, we need to create 32 (from `4*8`) `16x8_t` variables that hold row/column calculations for the resulting matrix.
+
+## Benchmarking
+
+|Function\nxn| 500 | 1000 | 5000
+|:           |:    |:     |:
+|mult        | 0.996s | 8.562s | 35m57.211s
+|mult1x8     | 1.401s | 11.233s | 37m9.711s
+|mult4x8     | 0.748s | 5.948s | 15m9.300s
+
+Where `Function` indicates function name used, and `nxn` is the matrix dimension.
+
+There is no substantial difference between `mult` and `mult1x8` likely because of `mult1x8` the 8 multiplications at time does not compensate for the overhead aligning data. However for `mult4x8`, there are substantial gains by performing `4x8` submatrix multiplications, which could be even faster on ARM NEON devices as opposed to virtual environment.
